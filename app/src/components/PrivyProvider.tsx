@@ -24,9 +24,7 @@ interface PrivyProviderProps {
   children: React.ReactNode;
 }
 
-export const PrivyProvider: React.FC<PrivyProviderProps> = ({
-  children,
-}: PrivyProviderProps) => {
+export const PrivyProvider: React.FC<PrivyProviderProps> = ({ children }) => {
   return (
     <BasePrivyProvider
       appId={PRIVY_APP_ID}

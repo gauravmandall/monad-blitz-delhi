@@ -1,4 +1,3 @@
-import { usePrivy, useWallets } from '@privy-io/react-auth';
 import { yupResolver } from '@hookform/resolvers/yup';
 import clsx from 'clsx';
 import { useRouter } from 'next/router';
@@ -12,7 +11,6 @@ import * as yup from 'yup';
 
 import { createRoom } from '@/lib/socket/roomHandler';
 
-import { AuthButton } from '@/components/AuthButton';
 import Button from '@/components/Button/Button';
 import ChatBox from '@/components/Chat/ChatBox';
 import Input from '@/components/Input';
@@ -42,20 +40,9 @@ export default function MultiplayerPage() {
   } = useRoomContext();
 
   const router = useRouter();
-  const { ready, authenticated } = usePrivy();
-  const { wallets } = useWallets();
 
   const [isCreatingRoom, setIsCreatingRoom] = React.useState(false);
   const [isJoiningRoom, setIsJoiningRoom] = React.useState(false);
-
-  const isWalletConnected =
-    ready && authenticated && (wallets.length > 0 || false);
-
-  React.useEffect(() => {
-    if (ready && !isWalletConnected) {
-      router.push('/');
-    }
-  }, [ready, isWalletConnected, router]);
 
   React.useEffect(() => {
     socket.emit('hi', 'hello');
@@ -95,28 +82,6 @@ export default function MultiplayerPage() {
     setIsJoiningRoom(true);
     router.push(`/multiplayer/${code}`);
   };
-
-  if (!ready || !isWalletConnected) {
-    return (
-      <AnimateFade>
-        <Seo title='Connect Wallet' />
-        <main>
-          <section>
-            <div className='layout flex min-h-[65vh] w-full flex-col items-center justify-center pt-10 text-center font-primary'>
-              <div className='flex w-full max-w-[500px] flex-col items-center gap-6'>
-                <RiTeamFill className='text-[5rem] text-fg' />
-                <h1 className='text-2xl font-bold'>Wallet Required</h1>
-                <p className='text-lg text-hl'>
-                  Please connect your wallet to access multiplayer pools
-                </p>
-                <AuthButton />
-              </div>
-            </div>
-          </section>
-        </main>
-      </AnimateFade>
-    );
-  }
 
   return (
     <AnimateFade>

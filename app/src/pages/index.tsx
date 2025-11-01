@@ -1,10 +1,9 @@
-import { usePrivy, useWallets } from '@privy-io/react-auth';
 import { useRouter } from 'next/router';
 import * as React from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
+import { IoMdPerson } from 'react-icons/io';
 import { RiTeamFill } from 'react-icons/ri';
 
-import { AuthButton } from '@/components/AuthButton';
 import Button from '@/components/Button/Button';
 import ChatBox from '@/components/Chat/ChatBox';
 import Input from '@/components/Input';
@@ -16,8 +15,6 @@ import { useRoomContext } from '@/context/Room/RoomContext';
 
 export default function HomePage() {
   const router = useRouter();
-  const { ready, authenticated } = usePrivy();
-  const { wallets } = useWallets();
 
   const methods = useForm<{ code: string }>({
     mode: 'onTouched',
@@ -25,16 +22,13 @@ export default function HomePage() {
 
   const { dispatch } = useRoomContext();
 
-  const isWalletConnected =
-    ready && authenticated && (wallets.length > 0 || false);
-
   return (
     <AnimateFade>
-      <Seo title='Monad Challenge - Multiplayer Typing' />
+      <Seo title='Monadtype' />
 
       <main>
         <section>
-          <div className='layout flex min-h-[70vh] flex-col items-center justify-center gap-8 pt-8 text-center'>
+          <div className='layout flex flex-col items-center gap-8 pt-8 text-center'>
             <div className='relative flex h-8 w-full max-w-[800px] items-center justify-between'>
               <ChatBox
                 className='right-3 w-[calc(100%+2rem)] sm:right-2'
@@ -42,83 +36,71 @@ export default function HomePage() {
               />
             </div>
 
-            {!isWalletConnected ? (
-              // Connect Wallet Screen
-              <div className='flex w-full max-w-[500px] flex-col items-center gap-6'>
-                <RiTeamFill className='text-[5rem] text-fg' />
-                <h1 className='text-3xl font-bold'>Monad Challenge</h1>
-                <p className='text-lg text-hl'>
-                  Connect your wallet to join or create multiplayer pools
-                </p>
-                <div className='mt-4'>
-                  <AuthButton className='flex flex-col items-center gap-4' />
-                </div>
-                <div className='mt-4 text-sm text-fg/70'>
-                  <p>Make sure you're connected to Monad Testnet</p>
-                </div>
+            <div className='aspect-video w-full max-w-[450px] overflow-hidden rounded-lg ring-4 ring-fg ring-offset-4 ring-offset-bg'>
+              <iframe
+                src='https://www.youtube.com/embed/nnM9h7twXg8?autoplay=1&mute=1&loop=1&color=white&controls=0&modestbranding=1&playsinline=1&rel=0&enablejsapi=1&playlist=nnM9h7twXg8'
+                title='Monadtype'
+                frameBorder='0'
+                allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
+                allowFullScreen
+                style={{
+                  width: '300%',
+                  height: '100%',
+                  marginLeft: '-100%',
+                  zIndex: 50,
+                }}
+              ></iframe>
+            </div>
+            <FormProvider {...methods}>
+              <Input
+                placeholder='enter your nickname'
+                autoComplete='off'
+                name='nickname'
+                id='nickname'
+                maxLength={14}
+                defaultValue={localStorage?.getItem('nickname') || ''}
+                onBlur={(e) => {
+                  if (!e.target.value) return;
+                  dispatch({ type: 'SET_NICKNAME', payload: e.target.value });
+                }}
+                className='text-center'
+              />
+            </FormProvider>
+            <div className='flex items-center gap-4'>
+              <Button
+                onClick={() => router.push('/solo')}
+                className='flex items-center'
+              >
+                <IoMdPerson className='mr-1' />
+                Play Solo
+              </Button>
+              <div>
+                <Button
+                  onClick={() => router.push('/multiplayer')}
+                  className='flex items-center'
+                >
+                  <RiTeamFill className='mr-1' />
+                  Multiplayer
+                </Button>
               </div>
-            ) : (
-              // Multiplayer Options Screen
-              <>
-                <div className='flex w-full max-w-[500px] flex-col items-center gap-6'>
-                  <RiTeamFill className='text-[5rem] text-fg' />
-                  <h1 className='text-3xl font-bold'>Monad Challenge</h1>
-                  <p className='text-lg text-hl'>
-                    Ready to compete? Join or create a multiplayer pool
-                  </p>
+            </div>
 
-                  <FormProvider {...methods}>
-                    <Input
-                      placeholder='enter your nickname'
-                      autoComplete='off'
-                      name='nickname'
-                      id='nickname'
-                      maxLength={14}
-                      defaultValue={localStorage?.getItem('nickname') || ''}
-                      onBlur={(e) => {
-                        if (!e.target.value) return;
-                        dispatch({
-                          type: 'SET_NICKNAME',
-                          payload: e.target.value,
-                        });
-                      }}
-                      className='text-center'
-                    />
-                  </FormProvider>
-
-                  <div className='flex flex-col items-center gap-4'>
-                    <Button
-                      onClick={() => router.push('/multiplayer')}
-                      className='flex w-full max-w-[300px] items-center justify-center'
-                    >
-                      <RiTeamFill className='mr-2' />
-                      Join or Create Pool
-                    </Button>
-
-                    <div className='mt-4'>
-                      <AuthButton className='text-sm' />
-                    </div>
-                  </div>
-                </div>
-
-                <div className='flex flex-col items-center justify-center gap-2 font-primary'>
-                  <div className='flex items-center space-x-2 text-sm'>
-                    <Kbd>tab</Kbd>
-                    <span className='text-hl'> + </span>
-                    <Kbd>enter</Kbd>
-                    <span className='text-hl'> - restart test </span>
-                  </div>
-                  <div className='flex items-center space-x-2 text-sm'>
-                    <Kbd>ctrl/cmd</Kbd>
-                    <span className='text-hl'> + </span>
-                    <Kbd>k</Kbd>
-                    <span className='text-hl'> or </span>
-                    <Kbd>p</Kbd>
-                    <span className='text-hl'> - command palette </span>
-                  </div>
-                </div>
-              </>
-            )}
+            <div className='flex flex-col items-center justify-center gap-2 font-primary'>
+              <div className='flex items-center space-x-2 text-sm'>
+                <Kbd>tab</Kbd>
+                <span className='text-hl'> + </span>
+                <Kbd>enter</Kbd>
+                <span className='text-hl'> - restart test </span>
+              </div>
+              <div className='flex items-center space-x-2 text-sm'>
+                <Kbd>ctrl/cmd</Kbd>
+                <span className='text-hl'> + </span>
+                <Kbd>k</Kbd>
+                <span className='text-hl'> or </span>
+                <Kbd>p</Kbd>
+                <span className='text-hl'> - command palette </span>
+              </div>
+            </div>
           </div>
         </section>
       </main>

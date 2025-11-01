@@ -2,7 +2,7 @@
 const withTM = require('next-transpile-modules')([
   '@privy-io/react-auth',
   '@privy-io/wagmi',
-  '@tanstack/react-query',
+  '@base-org/account',
   'viem',
   'wagmi',
 ]);
@@ -22,7 +22,7 @@ module.exports = withTM({
   // },
 
   // SVGR
-  webpack(config, { isServer }) {
+  webpack(config) {
     config.module.rules.push({
       test: /\.svg$/i,
       issuer: /\.[jt]sx?$/,
@@ -43,26 +43,7 @@ module.exports = withTM({
       fs: false,
       net: false,
       tls: false,
-      crypto: false,
-      stream: false,
-      http: false,
-      https: false,
-      os: false,
-      url: false,
-      zlib: false,
-      buffer: false,
-      encoding: false,
     };
-
-    // Don't parse node_modules, except the ones we're transpiling
-    if (!isServer) {
-      config.resolve.fallback = {
-        ...config.resolve.fallback,
-        fs: false,
-        net: false,
-        tls: false,
-      };
-    }
 
     return config;
   },

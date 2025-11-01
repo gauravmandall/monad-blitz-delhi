@@ -72,30 +72,25 @@ export const AuthButton: React.FC<AuthButtonProps> = ({
   const isConnected = authenticated && (wallets.length > 0 || user?.wallet);
 
   return (
-    <div className={`flex flex-col items-center gap-4 ${className}`}>
+    <div className={`auth-container ${className}`}>
       <button
-        className={`outline-solid active:bg-fg/80 transform rounded-lg bg-fg px-6 py-3 font-primary text-bg shadow-b shadow-fg/50 outline-offset-[6px] transition-all duration-200 hover:bg-fg/90 focus:outline-dashed focus:outline-[3px] focus:outline-fg/50 active:translate-y-[4px] active:shadow-none disabled:cursor-not-allowed disabled:opacity-50 ${
-          isConnected ? 'ring-2 ring-hl' : ''
-        }`}
+        className={`auth-btn ${isConnected ? 'connected' : ''}`}
         onClick={authenticated ? handleLogout : handleLogin}
         disabled={!ready}
       >
-        <span className='mr-2'>💳</span>
+        <span className="wallet-icon">💳</span>
         {getButtonText()}
       </button>
 
       {authenticated && !wallets.length && !user?.wallet && (
-        <button
-          className='transform rounded-lg border-2 border-fg bg-transparent px-4 py-2 font-primary text-fg transition-all duration-200 hover:bg-fg/10 active:translate-y-[2px]'
-          onClick={connectWallet}
-        >
+        <button className="connect-wallet-btn" onClick={connectWallet}>
           Connect Wallet to Play
         </button>
       )}
 
       {authenticated && wallets.length > 0 && (
-        <div className='text-sm text-hl'>
-          <span>Connected to Monad Testnet</span>
+        <div className="chain-info">
+          <span className="chain-label">Chain: Monad Testnet</span>
         </div>
       )}
     </div>
