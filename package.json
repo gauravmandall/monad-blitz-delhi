@@ -1,0 +1,7 @@
+{
+  "scripts": {
+    "dev": "concurrently \"bun dev:app\" \"bun dev:socket\"",
+    "dev:app": "cd app && bun dev",
+    "dev:socket": "cd socket && bun dev"
+  }
+}
